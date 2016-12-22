@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Example</title>
+  <link rel="stylesheet" href="../app/css/main.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    rect:hover {
+      fill: red !important;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      background: #fffefa;
+    }
+    .left, .right {
+      height: 100%;
+    }
+    .content {
+      width: 100%;
+      height: 100%;
+    }
+    .left {
+      width: 300px;
+      padding: 20px 10px;
+      box-sizing: border-box;
+      float: left;
+    }
+    .left .content {
+      border-right: 1px solid #ddd;
+    }
+    .right {
+      margin-left: 300px;
+      padding: 10px;
+    }
+    .right .content {
+      
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <div class="content">
+        
+      </div>
+    </div>
+    <div class="right">
+      <div class="content">
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+<script src="../vendor/jquery.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+<script src="../app/js/Http.js"></script>
+<script src="../app/js/Notify.js"></script>
+<script src="../app/js/LinkRelation.js"></script>
+<script>
+$(document).ready(function() {
+  'use strict';
+
+  var app = $('.right>.content').ixLinkRelation({
+    baseURL: '../data3.txt',
+  }, {
+    after: {
+      // dblclickNode: function(e, node, m) {
+      //   // m.follow(node)
+      // },
+
+    }
+  });
+  app.addNewItem();
+});
+
+</script>
