@@ -3,6 +3,10 @@
   height: 100%;
   position: absolute; }
 
+.ix-link-relation rect:hover {
+  cursor: pointer;
+  fill: #4694ff !important; }
+
 .ix-card {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.4), 0 2px 10px 0 rgba(0, 0, 0, 0.2); }
 
@@ -195,6 +199,38 @@
     .notify .notify-item.common {
       background: #1F2124; }
 
+.notify-new-element {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  min-height: 40px;
+  padding: 10px 15px;
+  box-sizing: border-box;
+  z-index: 10000000; }
+  .notify-new-element.on {
+    display: block; }
+  .notify-new-element.off {
+    display: none; }
+  .notify-new-element.success {
+    background: #8CD790; }
+  .notify-new-element.warn {
+    background: #EC7357; }
+  .notify-new-element.error {
+    background: #E71D36; }
+  .notify-new-element .notify-new-element-off {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    float: left;
+    background: url("../resource/close.svg");
+    background-size: 100% 100%;
+    cursor: pointer; }
+  .notify-new-element .notify-new-element-msg {
+    line-height: 20px;
+    margin-left: 40px;
+    height: 100%; }
+
 .ix-screen {
   position: relative;
   z-index: 100; }
@@ -232,8 +268,7 @@ html, body {
   font-size: 15px; }
 
 body {
-  position: relative;
-  background: #ddd; }
+  position: relative; }
 
 .full-area {
   width: 100%;
@@ -248,4 +283,4 @@ body {
   top: 0;
   right: 0;
   z-index: 100000000000;
-  background: inherit; }
+  background: #f8f8f8; }

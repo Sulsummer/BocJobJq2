@@ -40,3 +40,42 @@
         }
     }
 }
+.notify-new-element {
+    &.on {
+        display: block;
+    }
+    &.off {
+        display: none;
+    }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    min-height: 40px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    z-index: 10000000;
+    &.success {
+        background: #8CD790;
+    }
+    &.warn {
+        background: #EC7357;
+    }
+    &.error {
+        background: #E71D36;
+    }
+    .notify-new-element-off {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        float: left;
+        background: url('../resource/close.svg');
+        background-size: 100% 100%;
+        cursor: pointer;
+    }
+    .notify-new-element-msg {
+        line-height: 20px;
+        margin-left: 40px;
+        height: 100%;
+    }
+}

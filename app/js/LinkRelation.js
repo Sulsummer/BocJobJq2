@@ -24,12 +24,13 @@
             lineStrokeWidth: 1.5,
             svgShadow: true,
             color: {
-                pathColor: '#eb9f9f',
+                pathColor: '#f68484',
                 nodeColors: ['#A593E0', '#ffc952', '#47b8e0', '#f199bc', '#67D5B5',
                     '#ef5285', '#0080ff', '#52616a', '#9055A2', '#75D701'],
-                markerColor: '#ff0017'
+                markerColor: '#ff0017',
+                textColor: '#4d4d4d'
             },
-            isNodeFixed: true
+            isNodeFixed: false
         }, option);
         checkOptionValid.call(this, this.option);
 
@@ -100,6 +101,7 @@
         var that = this;
         $('body').find('.context-menu').each(function(i) {
             var $this = $(this);
+            $this.addClass('ix-card');
             if ($this.hasClass('rect')) {
                 that.contextmenus['rect'] = new ContextMenu($this, 'rect');
             }
@@ -139,13 +141,14 @@
     function getData(baseUrl, params) {
         var that = this,
             args = arguments;
-        w.http(baseUrl, params)
+        util.http(baseUrl, params)
         .done(function(success){
             if (args.length > 2) {
                 [].slice.call(args, 2).forEach(function(callback, i) {
                     callback.call(that, success);
                 });
             }
+            Notify.success('数据请求成功！', true);
         })
         .fail(function(error){
             console.log(error);
@@ -219,8 +222,8 @@
         this.layerSelector = null;
         this.$layerPanel   = null;
         this.$funcArea     = null;
-        this.$movePanel    = null;
-        this.$zoomPanel    = null;
+        // this.$movePanel    = null;
+        // this.$zoomPanel    = null;
         this.before        = null;
         this.ing           = null;
         this.after         = null;
@@ -252,8 +255,8 @@
     function initializeLinkItem() {
         initBoard.call(this, this.data, this.option);
         initLayerPanel.call(this, this.data);
-        initMovePanel.call(this, this.data);
-        initZoomPanel.call(this, this.data);
+        // initMovePanel.call(this, this.data);
+        // initZoomPanel.call(this, this.data);
     }
     /*
      * @description 初始化一个画布
@@ -276,10 +279,10 @@
 
         while (i <= maxLayer) {
             var $li       = $(d.createElement('li')),
-                p         = d.createElement('p'),
+                $p         = $(d.createElement('p')),
                 layerText = '第 ' + i + ' 层';
-            p.innerHTML = layerText;
-            $ul.append($li.append(p));
+            $p.text(layerText).addClass('layer-selector-p');
+            $ul.append($li.append($p));
 
             $li.data('layer', i).data('layer-text', layerText);
 
@@ -335,134 +338,134 @@
      * @description 初始化位移面板
      *              绑定位移面板的事件
      */
-    function initMovePanel(data) {
-        var that = this;
+    // function initMovePanel(data) {
+    //     var that = this;
 
-        var $movePanel = $(d.createElement('div')),
-            $ul        = $(d.createElement('ul')),
-            i          = 0,
-            $funcArea  = this.$funcArea;
+    //     var $movePanel = $(d.createElement('div')),
+    //         $ul        = $(d.createElement('ul')),
+    //         i          = 0,
+    //         $funcArea  = this.$funcArea;
 
-        if (!$funcArea) {
-            $funcArea = $(d.createElement('div'));
-            $funcArea.addClass('func-area');
-            this.$funcArea = $funcArea;
-            this.$element.append(this.$funcArea);
-        }
+    //     if (!$funcArea) {
+    //         $funcArea = $(d.createElement('div'));
+    //         $funcArea.addClass('func-area');
+    //         this.$funcArea = $funcArea;
+    //         this.$element.append(this.$funcArea);
+    //     }
 
-        var $liUp    = $(d.createElement('li')),
-            $liRight = $(d.createElement('li')),
-            $liDown  = $(d.createElement('li')),
-            $liLeft  = $(d.createElement('li'));
+    //     var $liUp    = $(d.createElement('li')),
+    //         $liRight = $(d.createElement('li')),
+    //         $liDown  = $(d.createElement('li')),
+    //         $liLeft  = $(d.createElement('li'));
 
-        $liUp.addClass('move-up').data('direction', 'up');
-        $liRight.addClass('move-right').data('direction', 'right');
-        $liDown.addClass('move-down').data('direction', 'down');
-        $liLeft.addClass('move-left').data('direction', 'left');
+    //     $liUp.addClass('move-up').data('direction', 'up');
+    //     $liRight.addClass('move-right').data('direction', 'right');
+    //     $liDown.addClass('move-down').data('direction', 'down');
+    //     $liLeft.addClass('move-left').data('direction', 'left');
 
-        var interval;
+    //     var interval;
 
-        $ul.append($liUp).append($liRight).append($liDown).append($liLeft)
-        .on('click', 'li', $$move)
-        .on('mousedown', 'li', function(e) {
-            var i = 0;
-            interval = setInterval(function() {
-                $$move(e);
-                i ++;
+    //     $ul.append($liUp).append($liRight).append($liDown).append($liLeft)
+    //     .on('click', 'li', $$move)
+    //     .on('mousedown', 'li', function(e) {
+    //         var i = 0;
+    //         interval = setInterval(function() {
+    //             $$move(e);
+    //             i ++;
 
-                if (i === 100){
-                    clearInterval(interval);
-                }
-            }, 10);
-        })
-        .on('mouseup', function(e) {
-            clearInterval(interval);
-        });
+    //             if (i === 100){
+    //                 clearInterval(interval);
+    //             }
+    //         }, 10);
+    //     })
+    //     .on('mouseup', function(e) {
+    //         clearInterval(interval);
+    //     });
 
-        function $$move(e) {
-            var $target   = $(e.target),
-                direction = $target.data('direction'),
-                distance  = 5;
+    //     function $$move(e) {
+    //         var $target   = $(e.target),
+    //             direction = $target.data('direction'),
+    //             distance  = 5;
 
-            switch (direction) {
-                case 'up':
-                    direction = 'vertical';
-                break;
-                case 'down':
-                    direction = 'vertical';
-                    distance  *= -1;
-                break;
-                case 'left':
-                    direction = 'horizontal';
-                break;
-                case 'right':
-                    direction = 'horizontal';
-                    distance  *= -1;
-                break;
-                default:
-                return;
-            }
-            that.board.move(direction, distance);
-        }
+    //         switch (direction) {
+    //             case 'up':
+    //                 direction = 'vertical';
+    //             break;
+    //             case 'down':
+    //                 direction = 'vertical';
+    //                 distance  *= -1;
+    //             break;
+    //             case 'left':
+    //                 direction = 'horizontal';
+    //             break;
+    //             case 'right':
+    //                 direction = 'horizontal';
+    //                 distance  *= -1;
+    //             break;
+    //             default:
+    //             return;
+    //         }
+    //         that.board.move(direction, distance);
+    //     }
 
 
-        $movePanel.addClass('move-panel').append($ul);
-        this.$movePanel = $movePanel;
-        this.$funcArea.append(this.$movePanel);
-    }
+    //     $movePanel.addClass('move-panel').append($ul);
+    //     this.$movePanel = $movePanel;
+    //     this.$funcArea.append(this.$movePanel);
+    // }
     /*
      * @description 初始化放大缩小面板
      *              绑定放大缩小事件
      */
-    function initZoomPanel(data) {
-        var that = this;
+    // function initZoomPanel(data) {
+    //     var that = this;
 
-        var $zoomPanel = $(d.createElement('div')),
-            $increase  = $(d.createElement('div')),
-            $decrease  = $(d.createElement('div')),
-            $funcArea  = this.$funcArea;
+    //     var $zoomPanel = $(d.createElement('div')),
+    //         $increase  = $(d.createElement('div')),
+    //         $decrease  = $(d.createElement('div')),
+    //         $funcArea  = this.$funcArea;
 
-        if (!$funcArea) {
-            $funcArea = $(d.createElement('div'));
-            $funcArea.addClass('func-area');
-            this.$funcArea = $funcArea;
-            this.$element.append(this.$funcArea);
-        }
+    //     if (!$funcArea) {
+    //         $funcArea = $(d.createElement('div'));
+    //         $funcArea.addClass('func-area');
+    //         this.$funcArea = $funcArea;
+    //         this.$element.append(this.$funcArea);
+    //     }
 
-        var interval;
-        $increase.addClass('increase').data('zoom', 'increase');
-        $decrease.addClass('decrease').data('zoom', 'decrease');
-        $zoomPanel.addClass('zoom-panel').append($increase).append($decrease)
-        .on('click', 'div.increase, div.decrease', $$zoom)
-        .on('mousedown', 'div.increase, div.decrease', function(e) {
-            var i = 0;
-            interval = setInterval(function() {
-                $$zoom(e);
-                i ++;
-                if (i === 100){
-                    clearInterval(interval);
-                }
-            }, 10);
-        })
-        .on('mouseup', 'div.increase, div.decrease', function(e) {
-            clearInterval(interval);
-        });
+    //     var interval;
+    //     $increase.addClass('increase').data('zoom', 'increase');
+    //     $decrease.addClass('decrease').data('zoom', 'decrease');
+    //     $zoomPanel.addClass('zoom-panel').append($increase).append($decrease)
+    //     .on('click', 'div.increase, div.decrease', $$zoom)
+    //     .on('mousedown', 'div.increase, div.decrease', function(e) {
+    //         var i = 0;
+    //         interval = setInterval(function() {
+    //             $$zoom(e);
+    //             i ++;
+    //             if (i === 100){
+    //                 clearInterval(interval);
+    //             }
+    //         }, 10);
+    //     })
+    //     .on('mouseup', 'div.increase, div.decrease', function(e) {
+    //         clearInterval(interval);
+    //     });
 
-        function $$zoom(e) {
-            var $target = $(e.target),
-                zoom    = $target.data('zoom'),
-                scale   = 0.1;
+    //     function $$zoom(e) {
+    //         var $target = $(e.target),
+    //             zoom    = $target.data('zoom'),
+    //             scale   = 0.1;
 
-            if (zoom === 'decrease') {
-                scale *= -1;
-            }
+    //         if (zoom === 'decrease') {
+    //             scale *= -1;
+    //         }
 
-            that.board.zoom(scale);
-        }
+    //         that.board.zoom(scale);
+    //     }
 
-        this.$zoomPanel = $zoomPanel;
-        this.$funcArea.append(this.$zoomPanel);
-    }
+    //     this.$zoomPanel = $zoomPanel;
+    //     this.$funcArea.append(this.$zoomPanel);
+    // }
     //
     //Private Funcs For LinkItem End
     //===============================
@@ -483,13 +486,14 @@
         this.paths          = [];
         this.force          = null;
         this.drag           = null;
+        this.zoom           = null;
         this.svgNodes       = null;
         this.svgPaths       = null;
         this.svgTexts       = null;
         this.viewBox        = null;                 // 这个记录的是svg初始化时的viewBox属性，不会被修改
         this.scale          = 1;
         this.contextmenus   = parent.contextmenus;
-        this.id             = getRadomNumAt15();
+        this.id             = util.getRandomNum(15);
     }
 
     Board.SCALE = [0.2, 2];
@@ -529,17 +533,17 @@
          */
         toggleByLayer: function(layer) {
             this.svgNodes.style('display', function(item, i){
-                if(item.data.layer > layer){
+                if(item.layer > layer){
                     return 'none';
                 }
             });
             this.svgTexts.style('display', function(item, i){
-                if(item.data.layer > layer){
+                if(item.layer > layer){
                     return 'none';
                 }
             });
             this.svgPaths.style('display', function(item, i){
-                if(item.source.data.layer > layer || item.target.data.layer > layer){
+                if(item.source.layer > layer || item.target.layer > layer){
                     return 'none';
                 }
             });
@@ -549,39 +553,39 @@
          * @description 执行放大缩小
          * @param scale float 放大缩小的比例差值
          */
-        zoom: function(scale) {
-            scale = scale + this.scale;
+        // zoom: function(scale) {
+        //     scale = scale + this.scale;
 
-            if (scale < Board.SCALE[0] || scale > Board.SCALE[1]) {
-                return;
-            }
+        //     if (scale < Board.SCALE[0] || scale > Board.SCALE[1]) {
+        //         return;
+        //     }
 
-            if (!this.viewBox) this.viewBox = this.svgElement.getAttribute('viewBox').split(' ');
+        //     if (!this.viewBox) this.viewBox = this.svgElement.getAttribute('viewBox').split(' ');
 
-            var viewBox = this.svgElement.getAttribute('viewBox').split(' ');
+        //     var viewBox = this.svgElement.getAttribute('viewBox').split(' ');
 
-            //原始大小
-            var originViewBox2 = parseInt(this.viewBox[2]),
-                originViewBox3 = parseInt(this.viewBox[3]);
+        //     //原始大小
+        //     var originViewBox2 = parseInt(this.viewBox[2]),
+        //         originViewBox3 = parseInt(this.viewBox[3]);
 
-            //当前位置、大小
-            var viewBox0 = parseInt(viewBox[0]),
-                viewBox1 = parseInt(viewBox[1]),
-                viewBox2 = parseInt(viewBox[2]),
-                viewBox3 = parseInt(viewBox[3]);
+        //     //当前位置、大小
+        //     var viewBox0 = parseInt(viewBox[0]),
+        //         viewBox1 = parseInt(viewBox[1]),
+        //         viewBox2 = parseInt(viewBox[2]),
+        //         viewBox3 = parseInt(viewBox[3]);
 
-            //目标变化大小
-            viewBox[2] = originViewBox2 / scale;
-            viewBox[3] = originViewBox3 / scale;
+        //     //目标变化大小
+        //     viewBox[2] = originViewBox2 / scale;
+        //     viewBox[3] = originViewBox3 / scale;
 
-            //目标变化位置
-            viewBox[0] = viewBox0 + (viewBox2 - viewBox[2])/2;
-            viewBox[1] = viewBox1 + (viewBox3 - viewBox[3])/2;
+        //     //目标变化位置
+        //     viewBox[0] = viewBox0 + (viewBox2 - viewBox[2])/2;
+        //     viewBox[1] = viewBox1 + (viewBox3 - viewBox[3])/2;
 
 
-            this.svgElement.setAttribute('viewBox', viewBox.join(' '));
-            this.scale = scale;
-        },
+        //     this.svgElement.setAttribute('viewBox', viewBox.join(' '));
+        //     this.scale = scale;
+        // },
         /*
          * @description 执行上下左右位移
          * @param direction string 决定水平或者垂直方向
@@ -589,20 +593,20 @@
          *                       水平方向，大于零向左移动，小于零向右移动
          *                       垂直方向，大于零向下移动，小于零向上移动
          */
-        move: function(direction, distance) {
-            if (!direction || !distance) return;
+        // move: function(direction, distance) {
+        //     if (!direction || !distance) return;
 
-            var viewBox = this.svgElement.getAttribute('viewBox').split(' ');
+        //     var viewBox = this.svgElement.getAttribute('viewBox').split(' ');
 
-            if (direction === 'horizontal') {
-                viewBox[0] = parseInt(viewBox[0]) + distance;
-            }
-            if (direction === 'vertical') {
-                viewBox[1] = parseInt(viewBox[1]) + distance;
-            }
+        //     if (direction === 'horizontal') {
+        //         viewBox[0] = parseInt(viewBox[0]) + distance;
+        //     }
+        //     if (direction === 'vertical') {
+        //         viewBox[1] = parseInt(viewBox[1]) + distance;
+        //     }
 
-            this.svgElement.setAttribute('viewBox', viewBox.join(' '));
-        }
+        //     this.svgElement.setAttribute('viewBox', viewBox.join(' '));
+        // }
 
     }
     //
@@ -625,8 +629,8 @@
                         // .attr("transform", "translate(0,0)scale(1)")
                         .attr("width", '100%')
                         .attr("height", '100%');
-        var def = this.svg.append('defs');
-        var filter = def.append('filter')
+        var defs = this.svg.append('defs');
+        var filter = defs.append('filter')
                         .attr('id', 'svg-shadow-'+this.id)
                         .attr('x', -1)
                         .attr('y', -1)
@@ -651,6 +655,7 @@
                         .attr('in', 'SourceGraphic')
                         .attr('in2', 'blurOut')
                         .attr('mode', 'normal');
+        this.defs       = defs;
         this.svgElement = this.$parentEle[0].querySelector('svg');
         this.svgElement.setAttribute('viewBox',
                         0+' '+ 0 +' '+
@@ -664,35 +669,68 @@
     function setNodes() {
         var that = this;
         this.data.forEach(function(item, i){
-            that.nodes.push({
-                data: item
-            });
+            that.nodes.push(item);
         });
     }
     /*
      * @description 初始化d3需要的连线数据
      */
     function setPaths() {
-        var that = this;
+        var that = this, id = util.getRandomNum(20);
+        this.paths = [];
         this.nodes.forEach(function(item, i){
-            that.paths = $$setPath(that.paths, item.data);
+            that.paths = that.paths.concat($$setPath(item));
         });
-        function $$setPath(paths, data){
-            if (!data.in) return;
-            data.in.forEach(function(item, i){
-                paths.push({
-                    source: item.order,
-                    target: data.order
+        // function $$setPath(paths, data){
+        //     if (!data.in) return;
+        //     data.in.forEach(function(item, i){
+        //         paths.push({
+        //             source: item.order,
+        //             target: data.order
+        //         });
+        //     });
+        //     if (!data.out) return;
+        //     data.out.forEach(function(item, i){
+        //         paths.push({
+        //             source: data.order,
+        //             target: item.order
+        //         });
+        //     });
+        //     return paths;
+        // }
+        function $$setPath(data) {
+            var i, len = that.data.length, result = [];
+            if (data.in) {
+                data.in.forEach(function(item) {
+                    for (i = 0; i < len; i ++) {
+                        if (item.order === that.data[i].order) {
+                            result.push({
+                                source: that.data[i],
+                                target: data,
+                                id: id
+                            });
+                            id ++;
+                            return;
+                        }
+                    }
                 });
-            });
-            if (!data.out) return;
-            data.out.forEach(function(item, i){
-                paths.push({
-                    source: data.order,
-                    target: item.order
+            }
+            if (data.out) {
+                data.out.forEach(function(item) {
+                    for (i = 0; i < len; i ++) {
+                        if (item.order === that.data[i].order) {
+                            result.push({
+                                target: that.data[i],
+                                source: data,
+                                id: id
+                            });
+                            id ++;
+                            return;
+                        }
+                    }
                 });
-            });
-            return paths;
+            }
+            return result;
         }
     }
     /*
@@ -705,29 +743,29 @@
                     .nodes(this.nodes)
                     .links(this.paths)
                     .size([this.svgElement.clientWidth, this.svgElement.clientHeight])
-                    .linkDistance(100)
+                    .linkDistance(120)
                     .linkStrength(1)
-                    .charge(-25000)
+                    .charge(-12000)
                     .gravity(1);
 
         this.force.on("tick", function(){ //对于每一个时间间隔
             //更新连线坐标
-            that.svgPaths.attr("x1",function(d){ return d.source.x; })
-                .attr("y1",function(d){ return d.source.y; })
-                .attr("x2",function(d){ return d.target.x; })
-                .attr("y2",function(d){ return d.target.y; });
-            that.svgPaths.attr("d", function(d){
-                return drawLineArrow(d.source.x, d.source.y, d.target.x, d.target.y);
+            that.svgPaths.attr("x1",function(item){ return item.source.x; })
+                .attr("y1",function(item){ return item.source.y; })
+                .attr("x2",function(item){ return item.target.x; })
+                .attr("y2",function(item){ return item.target.y; });
+            that.svgPaths.attr("d", function(item){
+                return drawLineArrow(item);
             });
             //更新节点坐标
             // that.svgNodes.attr("cx",function(d){ return d.x; })
             //     .attr("cy",function(d){ return d.y; });
-            that.svgNodes.attr("x",function(d){ return d.x; })
-                .attr("y",function(d){ return d.y; });
+            that.svgNodes.attr("x",function(item){ return item.x; })
+                .attr("y",function(item){ return item.y; });
 
             // 更新文字坐标
-            that.svgTexts.attr("x", function(d){ return d.x; })
-               .attr("y", function(d){ return d.y; });
+            that.svgTexts.attr("x", function(item){ return item.x; })
+               .attr("y", function(item){ return item.y; });
         });
 
 
@@ -746,47 +784,48 @@
         var that = this,
             svgNodes, svgPaths, svgTexts, e,
             drag = d3.behavior.drag()
-            .on('dragstart', function(node) {
+            .on('dragstart', function(d) {
                 e = d3.event.sourceEvent;
                 if (e.target.tagName === 'rect') {
+                    if (!that.option.isNodeFixed) d.fixed = true;
                     e.stopPropagation();
                 }
             })
-            .on('drag', function(d) {
+            .on('drag.node', function(d) {
                 if (e.target.tagName === 'rect') {
                     d.px = d3.event.x;
                     d.py = d3.event.y;
                     that.force.resume();
                 }
+            })
+            .on('dragend.node', function(d) {
+                if (e.target.tagName === 'rect') {
+                    // if (!that.option.isNodeFixed) d.fixed = false;
+                    e.stopPropagation();
+                }
             }),
-            // drag = this.force.drag(),
             zoom = d3.behavior.zoom().scaleExtent([0.2, 3]).duration(150)
-            .on('zoom', function() {
+            .on('zoom.globalG', function() {
                 that.globalG.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
             });
 
-
-        svgPaths = this.globalG.selectAll("path")
+        var svgArrows = this.defs.selectAll('marker')
                 .data(that.paths)
                 .enter()
-                .append("path")
-                .attr("d", function(item, i){
-                    //绘制箭头
-                    return drawLineArrow(item.source.x, item.source.y, item.target.x, item.target.y);
+                .append('marker')
+                .attr('id', function(item) {
+                    return 'marker'+item.id;
                 })
-                .attr("id", function(item, i){
-                    //添加每条连线的id
-                    return getRadomNumAt15() + "-i-path-" + item.source.index+'-'+item.target.index;
-                })
-                .attr('class', function(item, i) {
-                    //添加连线的class
-                    return 'i-path-'+that.id;
-                })
-                .style("stroke", function(){
-                    //设置连线的颜色
-                    return that.option.color.pathColor;
-                })
-                .style("stroke-width", that.option.lineStrokeWidth);  //连线的宽度
+                .attr("viewBox", "0 -8 14 16")
+                .attr("refX", 12)
+                .attr("markerWidth", 12)
+                .attr("markerHeight", 12)
+                .attr('markerUnits', 'userSpaceOnUse')
+                .attr("orient", "auto")
+                .append('path')
+                .attr("d", "M0,-8L13,0L0,8Z")
+                .attr('fill', that.option.color.pathColor);
+
         svgNodes = this.globalG.selectAll("rect")
                 .data(that.nodes)
                 .enter()
@@ -808,7 +847,7 @@
                     return item.y;
                 })
                 .attr("id", function(item, i){
-                    return getRadomNumAt15() + "-i-point-" + item.index;
+                    return util.getRandomNum(15) + "-i-point-" + item.index;
                 })
                 .attr('class', function(item, i) {
                     return 'i-node-'+that.id;
@@ -819,15 +858,49 @@
                 })
                 .style("fill",function(item,i){
                     //矩形的颜色
-                    return that.option.color.nodeColors[(item.data.layer-1)%that.option.color.nodeColors.length];
+                    return that.option.color.nodeColors[(item.layer-1)%that.option.color.nodeColors.length];
                 })
-                .call(drag);  //拖拽开始生效
+                .attr('transform', function(item, i) {
+                    var $this = d3.select(this),
+                    width  = $this.attr('width'),
+                    height = $this.attr('height');
+                    return 'translate('+(width/-2)+' '+(height/-2)+')';
+                })
+                .each(function(item) {
+                    item.node = this;
+                })
+                .call(drag);
+
+        svgPaths = this.globalG.selectAll("path")
+                .data(that.paths)
+                .enter()
+                .append("g")
+                .attr("marker-end", function(item) {
+                    return "url(#marker"+item.id+")";
+                })
+                .append("path")
+                .attr("d", function(item, i){
+                    return drawLineArrow(item);
+                })
+                .attr("id", function(item, i){
+                    //添加每条连线的id
+                    return util.getRandomNum(15) + "-i-path-" + item.source.index+'-'+item.target.index;
+                })
+                .attr('class', function(item, i) {
+                    //添加连线的class
+                    return 'i-path-'+that.id;
+                })
+                .style("stroke", function(){
+                    //设置连线的颜色
+                    return that.option.color.pathColor;
+                })
+                .style("stroke-width", that.option.lineStrokeWidth);  //连线的宽度
 
         svgTexts = this.globalG.selectAll("text")
                 .data(that.nodes)
                 .enter()
                 .append("text")
-                .style("fill", "black")
+                .style("fill", that.option.color.textColor)
                 .attr("dx", function(item, i){
                     return that.option.radius;
                 })
@@ -836,7 +909,7 @@
                 })
                 .text(function(item, i){
                     //文字内容
-                    return item.data.name;
+                    return item.name;
                 });
 
         this.svg.call(zoom);
@@ -846,6 +919,7 @@
         this.svgPaths = svgPaths;
         this.svgTexts = svgTexts;
         this.drag     = drag;
+        this.zoom     = zoom;
         return this;
     }
     /*
@@ -860,17 +934,17 @@
      * @description 根据参数，设置节点是否静止
      */
     function isNodeFixed() {
+        for (var len = this.nodes.length, i = len*len; i > 0; i --) {
+            this.force.tick();
+        }
         if (this.option.isNodeFixed) {
-            for (var len = this.nodes.length, i = len*len; i > 0; i --) {
-                this.force.tick();
-            }
             this.nodes.forEach(function(item) {
                 item.fixed = true;
             });
         }
-        else {
-            this.nodes[0].fixed = false;
-        }
+        // else {
+        //     this.nodes[0].fixed = false;
+        // }
     }
     /*
      * @description 执行before中的所有回调
@@ -959,32 +1033,10 @@
                             return 2*result[1];
                         }
                     }
-                })
-                .attr('transform', function(item, i) {
-                    if (ing.setNodeOffset) {
-                        var $this = d3.select(this);
-                        var detail = {
-                            width :  $this.attr('width'),
-                            height:  $this.attr('height'),
-                            rx    :  $this.attr('rx'),
-                            ry    :  $this.attr('ry'),
-                            radius:  that.option.radius
-                        };
-                        var offset = ing.setNodeOffset(item.data, detail);
-                        if (offset && (offset.length === 2)) {
-                            return 'translate('+offset[0]+' '+offset[1]+')';
-                        }
-                    }
                 });
 
         var updateTexts = this.svg.selectAll("text").data(this.nodes);
-        updateTexts.style("fill", function(item, i) {
-                    if (ing.setTextColor) {
-                        return ing.setTextColor(item.data);
-                    }
-                    return 'black';
-                })
-                .attr('transform', function(item, i) {
+        updateTexts.attr('transform', function(item, i) {
                     if (ing.setTextOffset) {
                         var $this = d3.select(this);
                         var detail = {
@@ -1023,21 +1075,28 @@
         //包含区别click事件和dblclick实际的判断
         //
         if (after.clickNode && typeof after.clickNode === 'function') {
-            this.$svgElement.on('click.node.ix.LinkRelation', '.i-node-'+this.id, function(e) {
-                if (dblclickTimer === null) {
-                    dblclickTimer = setTimeout(function() {
-                        dblclick = false;
+            this.svg.on('click.node.ix.LinkRelation', function() {
+                // if (dblclickTimer === null) {
+                //     dblclickTimer = setTimeout(function() {
+                //         dblclick = false;
 
                         //================
                         //实际执行click事件
                         //
-                        e.preventDefault();
+                         // '.i-node-'+this.id,
+                        var e = d3.event;
+                        if (!e) return;
+                        if (d3.event && d3.event.defaultPrevented) {
+                            return;
+                        }
                         try {
                             var node;
                             if (e.target.tagName === 'rect') {
                                 node = d3.select(e.target).data();
                             }
-                            if( after.clickNode.call(that, e, node && node[0]) === 'stopPropagation') {
+                            else return;
+
+                            if( after.clickNode.call(that, e, node[0], that.locationMarker) === 'stopPropagation') {
                                 e.stopPropagation();
                             }
                         }
@@ -1049,18 +1108,18 @@
                         //click事件执行结束
                         //==================
 
-                        clearTimeout(dblclickTimer);
-                        dblclickTimer = null;
-                        dblclick = true;
-                    }, 250);
-                }
-                else{
-                    if (dblclick) {
-                        clearTimeout(dblclickTimer);
-                        dblclickTimer = null;
-                        return;
-                    }
-                }
+                    //     clearTimeout(dblclickTimer);
+                    //     dblclickTimer = null;
+                    //     dblclick = true;
+                    // }, 250);
+                // }
+                // else{
+                //     if (dblclick) {
+                //         clearTimeout(dblclickTimer);
+                //         dblclickTimer = null;
+                //         return;
+                //     }
+                // }
             });
         }
         //
@@ -1070,83 +1129,83 @@
         //=====================
         //执行dblclickNode方法
         //
-        if (after.dblclickNode && typeof after.dblclickNode === 'function') {
-            this.$svgElement.on('dblclick.node.ix.LinkRelation', '.i-node-'+this.id, function(e) {
-                e.preventDefault();
-                try {
-                    var node;
-                    if (e.target.tagName === 'rect') {
-                        node = d3.select(e.target).data();
-                    }
-                    if (after.dblclickNode.call(that, e, node && node[0], that.locationMarker) === 'stopPropagation') {
-                        e.stopPropagation();
-                    }
-                }
-                catch(err) {
-                    throw ('error: ' + err);
-                }
-            })
-        }
+        // if (after.dblclickNode && typeof after.dblclickNode === 'function') {
+        //     this.$svgElement.on('dblclick.node.ix.LinkRelation', '.i-node-'+this.id, function(e) {
+        //         e.preventDefault();
+        //         try {
+        //             var node;
+        //             if (e.target.tagName === 'rect') {
+        //                 node = d3.select(e.target).data();
+        //             }
+        //             if (after.dblclickNode.call(that, e, node && node[0], that.locationMarker) === 'stopPropagation') {
+        //                 e.stopPropagation();
+        //             }
+        //         }
+        //         catch(err) {
+        //             throw ('error: ' + err);
+        //         }
+        //     })
+        // }
         //
         //执行dblclickNode方法结束
         //========================
 
-        if (after.clickPath && typeof after.clickPath === 'function') {
-            this.$svgElement.on('click.path.ix.LinkRelation', '.i-path-'+this.id, function(e) {
-                if (dblclickTimer === null) {
-                    dblclickTimer = setTimeout(function() {
-                        dblclick = false;
+        // if (after.clickPath && typeof after.clickPath === 'function') {
+        //     this.$svgElement.on('click.path.ix.LinkRelation', '.i-path-'+this.id, function(e) {
+        //         if (dblclickTimer === null) {
+        //             dblclickTimer = setTimeout(function() {
+        //                 dblclick = false;
 
-                        //================
-                        //实际执行click事件
-                        //
-                        e.preventDefault();
-                        try {
-                            var path, isExchangable = $$checkPathIsExchangable.call(that, e);
-                            if( after.clickPath.call(that, e, path, isExchangable) === 'stopPropagation') {
-                                e.stopPropagation();
-                            }
-                        }
-                        catch(err) {
-                            throw ('error: ' + err);
-                        }
+        //                 //================
+        //                 //实际执行click事件
+        //                 //
+        //                 e.preventDefault();
+        //                 try {
+        //                     var path, isExchangable = $$checkPathIsExchangable.call(that, e);
+        //                     if( after.clickPath.call(that, e, path, isExchangable) === 'stopPropagation') {
+        //                         e.stopPropagation();
+        //                     }
+        //                 }
+        //                 catch(err) {
+        //                     throw ('error: ' + err);
+        //                 }
 
-                        //
-                        //click事件执行结束
-                        //==================
+        //                 //
+        //                 //click事件执行结束
+        //                 //==================
 
-                        clearTimeout(dblclickTimer);
-                        dblclickTimer = null;
-                        dblclick = true;
-                    }, 250);
-                }
-                else{
-                    if (dblclick) {
-                        clearTimeout(dblclickTimer);
-                        dblclickTimer = null;
-                        return;
-                    }
-                }
-            })
-        }
+        //                 clearTimeout(dblclickTimer);
+        //                 dblclickTimer = null;
+        //                 dblclick = true;
+        //             }, 250);
+        //         }
+        //         else{
+        //             if (dblclick) {
+        //                 clearTimeout(dblclickTimer);
+        //                 dblclickTimer = null;
+        //                 return;
+        //             }
+        //         }
+        //     })
+        // }
 
-        //=====================
-        //执行dblclickPath方法
-        //
-        if (after.dblclickPath && typeof after.dblclickPath === 'function') {
-            this.$svgElement.on('dblclick.path.ix.LinkRelation', '.i-path-'+this.id, function(e) {
-                e.preventDefault();
-                try {
-                    var path, isExchangable = $$checkPathIsExchangable.call(that, e);
-                    if (after.dblclickPath.call(that, e, path, isExchangable, that.locationMarker) === 'stopPropagation') {
-                        e.stopPropagation();
-                    }
-                }
-                catch(err) {
-                    throw ('error: ' + err);
-                }
-            })
-        }
+        // //=====================
+        // //执行dblclickPath方法
+        // //
+        // if (after.dblclickPath && typeof after.dblclickPath === 'function') {
+        //     this.$svgElement.on('dblclick.path.ix.LinkRelation', '.i-path-'+this.id, function(e) {
+        //         e.preventDefault();
+        //         try {
+        //             var path, isExchangable = $$checkPathIsExchangable.call(that, e);
+        //             if (after.dblclickPath.call(that, e, path, isExchangable, that.locationMarker) === 'stopPropagation') {
+        //                 e.stopPropagation();
+        //             }
+        //         }
+        //         catch(err) {
+        //             throw ('error: ' + err);
+        //         }
+        //     })
+        // }
         //
         //执行dblclickPath方法结束
         //========================
@@ -1167,17 +1226,17 @@
 
         //========================
         //执行连线右键事件
-        if (after.contextmenuPath && typeof after.contextmenuPath === 'function') {
-            this.$svgElement.on('contextmenu', 'path', function(e) {
-                e.preventDefault();
-                if ((e.target.tagName === 'path') && that.contextmenus['path']) {
-                    var path = d3.select(e.target).data()[0],
-                        isExchangable = $$checkPathIsExchangable.call(that, e);
+        // if (after.contextmenuPath && typeof after.contextmenuPath === 'function') {
+        //     this.$svgElement.on('contextmenu', 'path', function(e) {
+        //         e.preventDefault();
+        //         if ((e.target.tagName === 'path') && that.contextmenus['path']) {
+        //             var path = d3.select(e.target).data()[0],
+        //                 isExchangable = $$checkPathIsExchangable.call(that, e);
 
-                    after.contextmenuPath.call(that, e, that.contextmenus['path'], path, isExchangable);
-                }
-            });
-        }
+        //             after.contextmenuPath.call(that, e, that.contextmenus['path'], path, isExchangable);
+        //         }
+        //     });
+        // }
         //========================
 
         if (after.customize) {
@@ -1191,24 +1250,24 @@
     /*
      * @description 检查是否是双向连线
      */
-    function $$checkPathIsExchangable(e) {
-        var isExchangable = false,
-            that = this;
-        if (e.target.tagName === 'path') {
-            var path = d3.select(e.target).data()[0];
-            var tmpObj = {
-                source: path.target.index,
-                target: path.source.index
-            };
-            that.paths.forEach(function(item, i) {
-                if( (item.source.index === tmpObj.source)
-                    && (item.target.index === tmpObj.target)) {
-                    isExchangable = true;
-                }
-            })
-        }
-        return isExchangable;
-    }
+    // function $$checkPathIsExchangable(e) {
+    //     var isExchangable = false,
+    //         that = this;
+    //     if (e.target.tagName === 'path') {
+    //         var path = d3.select(e.target).data()[0];
+    //         var tmpObj = {
+    //             source: path.target.index,
+    //             target: path.source.index
+    //         };
+    //         that.paths.forEach(function(item, i) {
+    //             if( (item.source.index === tmpObj.source)
+    //                 && (item.target.index === tmpObj.target)) {
+    //                 isExchangable = true;
+    //             }
+    //         })
+    //     }
+    //     return isExchangable;
+    // }
 
     /*
      * @description 检查是否有设置权重的方法，有则执行并返回权重，没有则返回默认权重1
@@ -1229,39 +1288,36 @@
      * @param x1,y1 float 连线一端的坐标
      * @param x2,y2 float 连线另一端的坐标
      */
-    function drawLineArrow(x1,y1,x2,y2) {
+    function drawLineArrow(item) {
         var path;
-        var slopy,cosy,siny;
-        var Par=10.0;
-        var x3,y3;
-        slopy=Math.atan2((y1-y2),(x1-x2));
-        cosy=Math.cos(slopy);
-        siny=Math.sin(slopy);
+        var target1 = util.calculateRectEdge(item.target, item.source),
+            target2 = util.calculateRectEdge(item.source, item.target);
+        if (!target1 || !target2) return '';
+
+        var x1 = target1.x, y1 = target1.y,
+            x2 = target2.x, y2 = target2.y;
+        // var slopy,cosy,siny;
+        // var Par=10.0;
+        // var x3,y3;
+        // slopy=Math.atan2((y1-y2),(x1-x2));
+        // cosy=Math.cos(slopy);
+        // siny=Math.sin(slopy);
 
         path="M"+x1+","+y1+" L"+x2+","+y2;
 
-        x3=(Number(x1)+Number(x2))/2;
-        y3=(Number(y1)+Number(y2))/2;
+        // x3=(Number(x1)+Number(x2))/2;
+        // y3=(Number(y1)+Number(y2))/2;
 
-        path +=" M"+x3+","+y3;
+        // path +=" M"+x3+","+y3;
 
-        path +=" L"+(Number(x3)+Number(Par*cosy-(Par/2*siny)))+","+(Number(y3)+Number(Par*siny+(Par/2*cosy)));
+        // path +=" L"+(Number(x3)+Number(Par*cosy-(Par/2*siny)))+","+(Number(y3)+Number(Par*siny+(Par/2*cosy)));
 
-        path +=" M"+(Number(x3)+Number(Par*cosy+Par/2*siny))+","+ (Number(y3)-Number(Par/2*cosy-Par*siny));
-        path +=" L"+x3+","+y3;
+        // path +=" M"+(Number(x3)+Number(Par*cosy+Par/2*siny))+","+ (Number(y3)-Number(Par/2*cosy-Par*siny));
+        // path +=" L"+x3+","+y3;
 
         return path;
     }
-    /*
-     * @description 生成15位的随机数
-     */
-    function getRadomNumAt15(){
-        var t = '';
-        for(var i = 0; i < 15; i ++){
-            t += Math.floor(Math.random() * 10);
-        }
-        return t;
-    }
+
     //
     //Private Funcs For Board End
     //============================
@@ -1294,6 +1350,7 @@
             var x = position.clientX, y = position.clientY, that = this;
             this.element
                 .attr('d', function() {
+                    // return "M0,-8L12,0L0,8Z";
                     // return 'M'+x+' '+y+' L'+(x-7)+' '+(y-10)+'Q '+x+' '+(y-24)+' '+(x+7)+' '+(y-10)+' Z';
                     return 'M'+x+' '+y+' L'+(x-8)+' '+(y-10)+' L'+(x-8)+' '+(y-20)+' L'+(x+8)+' '+(y-20)+' L'+(x+8)+' '+(y-10)+' Z';
                     // return 'M'+x+' '+y+' L'+(x-8)+' '+(y-10)+' L'+(x-8)+' '+(y-10.5)+' Q '+x+' '+(y-22.5)+' '+(x+8)+' '+(y-10.5)+' L'+(x+8)+' '+(y-10)+' Z';
@@ -1316,15 +1373,31 @@
                 clientX: node.x,
                 clientY: node.y
             });
-            this.parent.drag.on('drag', function(item) {
-                if (item.index === node.index) {
-                    var position = {
-                        clientX: node.x,
-                        clientY: node.y
-                    }
-                    that.show(position);
-                }
+            this.parent.drag.on('drag.marker', function() {
+                // console.log(node.x)
+                that.show({
+                    clientX: node.x,
+                    clientY: node.y
+                });
+                // if (node.node.style.display && node.node.style.display === 'none') that.hide();
             });
+            this.parent.zoom.on('zoom.marker', function() {
+                that.element.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                // if (node.node.style.display && node.node.style.display === 'none') that.hide();
+            });
+            $(w).on('click.marker', function(e) {
+                if ($(e.target).hasClass('layer-selector-p'))
+                    if (node.node.style.display && node.node.style.display === 'none')
+                        that.hide();
+            });
+            // this.parent.drag.on('drag', function() {
+            //     // if (item.index === node.index) {
+            //     that.show({
+            //         clientX: node.x,
+            //         clientY: node.y
+            //     });
+            //     // }
+            // });
         }
     }
     //
@@ -1481,10 +1554,3 @@
 
 
 })(jQuery, window, document, window.Notify);
-
-// var links = [ { source : {value:obj1, writable: true} , target:{value:obj2, writable: true}, obj1: obj1, obj2: obj2} , 
-// { source :{value:obj1, writable: true}, target:{value:obj3, writable: true}, obj1: obj1, obj3:obj3} ,
-// { source :{value:obj1, writable: true}, target:{value:obj4, writable: true}, obj1: obj1, obj4: obj4} , 
-// { source :{value:obj2, writable: true}, target:{value:obj5, writable: true}, obj2: obj2, obj5: obj5} ,
-// { source :{value:obj2, writable: true}, target:{value:obj6, writable: true}, obj2: obj2, obj6: obj6} , 
-// { source :{value:obj2, writable: true}, target:{value:obj7, writable: true}, obj2: obj2, obj7: obj7} ];
