@@ -203,7 +203,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="left">
+    <div class="left on">
       <div class="close on"></div>
       <div class="content">
         <h3 class="title maintitle"></h3>
@@ -258,39 +258,21 @@
 <script src="../vendor/d3.min.js"></script>
 <script src="../app/js/Util.js"></script>
 <script src="../app/js/Notify.js"></script>
-<script src="../app/js/LinkRelation.js"></script>
-<script src="PopTable.js"></script>
-<script src="Left.js"></script>
+<script src="../app/js/element/CONFIG.js"></script>
+<script src="../app/js/element/BaseElement.js"></script>
+<script src="../app/js/element/node/BaseNode.js"></script>
+<script src="../app/js/element/node/CircleNode.js"></script>
+<script src="../app/js/element/node/BaseNode.js"></script>
+<script src="../app/js/graph/Parse.js"></script>
+<script src="../app/js/graph/Nodes.js"></script>
+<script src="../app/js/graph/BoardContainer.js"></script>
+<script src="../app/js/graph/Graph.js"></script>
 <script>
 $(document).ready(function() {
-  'use strict';
-
-  var app = $('.right>.content').ixLinkRelation({
-    baseURL: '../data.txt',
-  }, {
-    ing: {
-      setCircle: function() {
-        return 0;
-      }
-    },
-    after: {
-      // dblclickNode: function(e, node, m) {
-      //   // m.follow(node)
-      // },
-      clickNode: function(e, node, m) {
-        m.follow(node);
-        // pop.init(node);
-        left.init(node);
-
-      },
-      contextmenuNode: function(e, menu, node) {
-        menu.open(e)
-        console.log(node)
-      }
-
-    }
-  });
-
-});
+  util.http('../data4.txt')
+  .done(function(success) {
+    graph.init(success, d3.select('.right > .content'));
+  })
+})
 
 </script>

@@ -23,7 +23,7 @@ gulp.task('server', ['build:scss'], function(){
         server: './'
     });
 
-    gulp.watch(['app/*', 'app/*.*', 'app/*/*.*'], ['build:scss']).on('change', browserSync.reload);
+    gulp.watch(['app/*', 'app/*.*', 'app/*/*.*', 'app/*/*/*.*', 'app/*/*/*/*.*', 'example/*.*'], ['build:scss']).on('change', browserSync.reload);
 });
 gulp.task('build:scss', function() {
     return gulp.src(app.scss)
